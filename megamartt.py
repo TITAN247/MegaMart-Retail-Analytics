@@ -485,86 +485,108 @@ print(f"Lowest Revenue City  : {lowest_city}")
 # MODULE 7 : PAYMENT MODE ANALYSIS
 # ==========================================================
 
-payment_values, payment_counts = np.unique(
+print("\n")
+print("=" * 80)
+print("                 PAYMENT MODE ANALYSIS")
+print("=" * 80)
 
+# ----------------------------------------------------------
+# Unique Payment Modes and Transaction Count
+# ----------------------------------------------------------
+
+payment_modes, payment_counts = np.unique(
     sales["PaymentMode"],
-
     return_counts=True
-
 )
 
-payment_percentage = (
+# Percentage of Transactions
+payment_percentage = (payment_counts / len(sales)) * 100
 
-    payment_counts /
-
-    len(sales)
-
-) * 100
-
+# Empty Lists
 payment_revenue = []
+payment_average_revenue = []
+payment_average_rating = []
+payment_quantity = []
 
-payment_average = []
+# ----------------------------------------------------------
+# Calculate Analytics for Every Payment Mode
+# ----------------------------------------------------------
 
-for mode in payment_values:
+for mode in payment_modes:
 
+    # Revenue
     current_revenue = np.sum(
+        revenue[sales["PaymentMode"] == mode]
+    )
 
-        revenue[
-            sales["PaymentMode"] == mode
-        ]
+    # Average Revenue
+    average_revenue = np.mean(
+        revenue[sales["PaymentMode"] == mode]
+    )
 
+    # Average Rating
+    average_rating = np.mean(
+        sales["Rating"][sales["PaymentMode"] == mode]
+    )
+
+    # Total Quantity Sold
+    quantity = np.sum(
+        sales["Quantity"][sales["PaymentMode"] == mode]
     )
 
     payment_revenue.append(current_revenue)
+    payment_average_revenue.append(average_revenue)
+    payment_average_rating.append(average_rating)
+    payment_quantity.append(quantity)
 
-    avg = np.mean(
+# Convert Lists into NumPy Arrays
+payment_revenue = np.array(payment_revenue)
+payment_average_revenue = np.array(payment_average_revenue)
+payment_average_rating = np.array(payment_average_rating)
+payment_quantity = np.array(payment_quantity)
 
-        revenue[
-            sales["PaymentMode"] == mode
-        ]
+# ----------------------------------------------------------
+# Business Insights
+# ----------------------------------------------------------
 
+most_preferred = payment_modes[np.argmax(payment_counts)]
+least_preferred = payment_modes[np.argmin(payment_counts)]
+
+highest_revenue_mode = payment_modes[np.argmax(payment_revenue)]
+lowest_revenue_mode = payment_modes[np.argmin(payment_revenue)]
+
+highest_avg_order = payment_modes[np.argmax(payment_average_revenue)]
+
+# ----------------------------------------------------------
+# Print Report
+# ----------------------------------------------------------
+
+print(f"{'Payment':<12}{'Transactions':>15}{'Share %':>12}{'Revenue':>18}{'Avg Order':>15}{'Avg Rating':>15}{'Quantity':>12}")
+print("-" * 100)
+
+for i in range(len(payment_modes)):
+
+    print(
+        f"{payment_modes[i]:<12}"
+        f"{payment_counts[i]:>15}"
+        f"{payment_percentage[i]:>11.2f}%"
+        f"₹{payment_revenue[i]:>16,.2f}"
+        f"₹{payment_average_revenue[i]:>13,.2f}"
+        f"{payment_average_rating[i]:>15.2f}"
+        f"{payment_quantity[i]:>12}"
     )
 
-    payment_average.append(avg)
+print("\n" + "=" * 80)
+print("                     PAYMENT INSIGHTS")
+print("=" * 80)
 
-payment_revenue = np.array(payment_revenue)
+print(f"Most Preferred Payment Mode     : {most_preferred}")
+print(f"Least Preferred Payment Mode    : {least_preferred}")
+print(f"Highest Revenue Payment Mode    : {highest_revenue_mode}")
+print(f"Lowest Revenue Payment Mode     : {lowest_revenue_mode}")
+print(f"Highest Average Order Value     : {highest_avg_order}")
 
-payment_average = np.array(payment_average)
-
-most_preferred = payment_values[
-
-    np.argmax(payment_counts)
-
-]
-
-least_preferred = payment_values[
-
-    np.argmin(payment_counts)
-
-]
-
-print("\n")
-print("=" * 70)
-print("              PAYMENT MODE ANALYSIS")
-print("=" * 70)
-
-for i in range(len(payment_values)):
-
-    print(f"\nPayment Mode : {payment_values[i]}")
-
-    print(f"Transactions : {payment_counts[i]}")
-
-    print(f"Percentage   : {payment_percentage[i]:.2f}%")
-
-    print(f"Revenue      : ₹{payment_revenue[i]:,.2f}")
-
-    print(f"Average Revenue : ₹{payment_average[i]:,.2f}")
-
-print("\n")
-
-print(f"Most Preferred Payment Mode  : {most_preferred}")
-
-print(f"Least Preferred Payment Mode : {least_preferred}")
+print("=" * 80)
 
 
 # ==========================================================
